@@ -4,16 +4,15 @@ from langchain.schema import (
     HumanMessage,
     SystemMessage
 )
+
 import re
 import hashlib
 import shutil
 import time
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-from fastapi import FastAPI, WebSocket
 from starlette.middleware.cors import CORSMiddleware as CORSMiddleware
 from langchain.embeddings import OpenAIEmbeddings
-
 
 from dotenv import load_dotenv
 
@@ -135,8 +134,9 @@ def list_of_dicts_to_dataframe(lst, pkl_filename=None):
     return df
 
 def add_interviews_to_library(interviews,
-                               all_interviews_file_path=all_interviews_file_path,
-                               verbose=False):
+                                all_interviews_file_path=all_interviews_file_path,
+                               verbose=False,
+                               overwrite=False):
     """example data ["06-20-2023", 
      {
     "Can you tell me about your current professional role and what led you to this career path?": "I am a software architect. I work primarily with Python and creating programs that use AI integrated into them.",
@@ -358,7 +358,7 @@ def main(use_manual_library=True, verbose=False):
     list_of_dicts_to_dataframe(embeddings_loaded, pkl_filename=all_ebbeddings_df_file_path)
 
 
-if __name__ == "__main__":    
+if __name__ == "__main__":
     main(verbose=True)
 
     # test the embeddings
@@ -366,6 +366,3 @@ if __name__ == "__main__":
     res = search_embeddings_with_text(embeddings_loaded, "tell me about chris' programming skills")
     
     print(res["content"].head(10).tolist())
-    
-        
-

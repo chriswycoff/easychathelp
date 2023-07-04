@@ -1,8 +1,14 @@
 topics = ["Chris Wycoff"]
 
 interviews = [
+    ["06-25-2023",
+    {"when was chris born?": "Chris was born on september 9th 1990"},
+    {"where was chris born?": "Chris was born in Oklahoma, USA he grew up in California where he moved when he was a small child"},
+    {"what is chris's favorite food?": "Some of Chris's favorite foods are beets, steak, apples, sauerkraut, and eggs."},
+    {"Where did Chris go to college?": "Chris went to college at University of oregon and graduated with a degree in computer information science, a minor in business and a minor in biology."},
+    ],
     ["06-20-2023",
-     {
+    {
     "Can you tell me about your current professional role and what led you to this career path?": "I am a software architect. I work primarily with Python and creating programs that use AI integrated into them.",
     "Can you share with us a non-work related hobby or interest you have, and why it appeals to you?": "I really like gardening. I have a garden with many plants like raspberries, apple trees, blueberries, grapes, and many annuals like kale, collards, corn, beans, peas, arugula to name a few.",
     "What are your thoughts on sustainability and organic farming?": "I think that part of our fundamental human nature drives us to live from the land. The modernization and globalization of the food supply has taken that from the average 1st world person, and I think many people would be better off if they had a more intimate relationship with their food.",
@@ -43,8 +49,7 @@ interviews = [
     ["06-20-2023-4",
      {"where has chris wycoff worked?": "Chris Wycoff has worked for the Addition an AI startup, Sombra a Blockchain gaming organization, Elemints a smart contract protocol for virtual card collecting and trading, Air-Weigh a trucking technology company. And many other clients and organizations as a consultant."},
     {"Did chris work at realtor.com? or atlassian?": "No Chris did not work as an employee at realtor.com or atlassian. He worked on major projects for these organizations as a consultant."}
-    ],
-
+    ]
 ]
 
 files = [

@@ -102,7 +102,7 @@ class WebsocketCallbackHandler(AsyncCallbackHandler):
     async def on_llm_start(
         self, serialized: Dict[str, Any], prompts: List[str], **kwargs: Any
     ) -> None:
-        print("starting")
+        print("on_llm_start")
         """Run when LLM starts running."""
 
     async def on_llm_new_token(self, token: str, **kwargs: Any) -> None:
@@ -111,7 +111,8 @@ class WebsocketCallbackHandler(AsyncCallbackHandler):
         self.current_response += token
 
     async def on_llm_end(self, response: LLMResult, **kwargs: Any) -> None:
-        print("llm ending!",response)
+        # print("llm ending!",response)
+        print("on_llm_end")
         await self.websocket.send_json({"type": "llm_end"})
         """Run when LLM ends running."""
 
@@ -188,7 +189,7 @@ async def run_agent_stream(websocket: WebSocket):
     
     while True:
         incoming = await websocket.receive_json()
-        print(incoming)
+        # print(incoming)
         messages = incoming["messages"]
         chat_id = incoming["chat_id"]
         # print("messages: ", messages)
@@ -212,10 +213,10 @@ async def run_agent_stream(websocket: WebSocket):
         
         sorted_by_similarity_texts = sorted_by_similarity_texts[0:DATA_DEPTH_THRESHOLD]
 
-        print("sorted_by_similarity_texts: ", sorted_by_similarity_texts)
+        # print("sorted_by_similarity_texts: ", sorted_by_similarity_texts)
         sorted_by_similarity_texts_duplicates_removed = remove_duplicates_from_sorted_list(sorted_by_similarity_texts)
         
-        print("sorted_by_similarity_texts_duplicates_removed: ", sorted_by_similarity_texts_duplicates_removed)
+        # print("sorted_by_similarity_texts_duplicates_removed: ", sorted_by_similarity_texts_duplicates_removed)
 
         len_of_list = len(sorted_by_similarity_texts_duplicates_removed)
         for i in range(len(sorted_by_similarity_texts_duplicates_removed)):
@@ -225,7 +226,7 @@ async def run_agent_stream(websocket: WebSocket):
             else:
                 relevant_questions += f"{sorted_by_similarity_texts_duplicates_removed[i]}\n\n"
         
-        print("relevant_questions: ", relevant_questions)
+        # print("relevant_questions: ", relevant_questions)
 
         system_string = f"""You are the official chatbot of {ORGANIZATION_NAME}
 Recently {ORGANIZATION_NAME} and other people were interviewed about {ORGANIZATION_NAME} here is some of the questions they were asked and how they responded:
@@ -236,6 +237,8 @@ Recently {ORGANIZATION_NAME} and other people were interviewed about {ORGANIZATI
 Use this to guide your conversation with the user. Answer the user questions very directly and professionally. If you don't know the answer, tell the user you don't know the answer and suggest they email chris at chriswywy@gmail.com
 """
         # we now have a list of messages, we can use this to build a conversation
+
+        print(system_string)
 
         final_messages = []
 
@@ -252,7 +255,7 @@ Use this to guide your conversation with the user. Answer the user questions ver
 
         # print("final_messages: ", final_messages[1:])
 
-        print("final_messages: ", final_messages)
+        # print("final_messages: ", final_messages)
 
         response = await chat.agenerate([final_messages])
         

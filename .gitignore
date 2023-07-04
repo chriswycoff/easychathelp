@@ -9,6 +9,6 @@ info_files/
 info_files
 *pkl
 commands.txt
-.gcloudignore
 *.bak
 */backups/*
+*key.json
