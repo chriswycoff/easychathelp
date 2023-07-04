@@ -12,3 +12,5 @@ commands.txt
 *.bak
 */backups/*
 *key.json
+/chris
+chris

@@ -26,6 +26,9 @@ import numpy as np
 import library
 
 
+from google.cloud import storage
+
+
 load_dotenv(".env")
 
 # Get environment variable
@@ -33,8 +36,17 @@ open_ai_key = os.getenv("OPEN_AI_KEY")
 
 # print(value)
 
-# Usage example
-all_ebbeddings_file_path = 'embeddings/all_embeddings.pkl'
+
+
+# Set the path to the service account key in the environment variable
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "storage-key.json"
+
+# Initialize the Storage client
+storage_client = storage.Client()
+
+
+# state and embedding paths
+
 all_ebbeddings_df_file_path = 'embeddings/all_embeddings_df.pkl'
 all_interviews_file_path = 'state/all_interviews.pkl'
 all_files_file_path = 'state/all_files.pkl'
@@ -354,7 +366,7 @@ def main(use_manual_library=True, verbose=False):
     process_files(files)
 
     # save all embeddings
-    embeddings_loaded = load_pkl(all_ebbeddings_file_path, verbose=verbose)
+    embeddings_loaded = load_pkl(all_embeddings_filename, verbose=verbose)
     list_of_dicts_to_dataframe(embeddings_loaded, pkl_filename=all_ebbeddings_df_file_path)
 
 
