@@ -451,9 +451,9 @@ signUpBtn.addEventListener('click', () => {
         <div class="login-avatar-container">
             <button id="login-btn-avatar">Login</button>
             <span id="display-name"></span>
-            <button id="logout-btn-avatar">Logoutt</button>
+            <button id="logout-btn-avatar">Logout</button>
         </div>
-        
+        <!-- Chat/ QA -->
         <div class="chat-container">
             <div class="chat-header">
                 <span>Easy Chat Help</span>            
@@ -471,12 +471,6 @@ signUpBtn.addEventListener('click', () => {
             </div>
 
         </div>
-    
-    <!-- <div id="user-info" style="position: absolute; top: 0; right: 0; display: none;">
-        <img id="user-avatar" src="" alt="User avatar" style="height: 50px; width: 50px;">
-        <span id="user-email"></span>
-    </div> -->
-    
     <script>
 
 
@@ -496,25 +490,7 @@ backBtn.addEventListener('click', () => {
 });
 
 
-/// helper functions ///
-function generateUUID() {
-let d = new Date().getTime();
-if (typeof performance !== 'undefined' && typeof performance.now === 'function'){
-    d += performance.now(); // use high-precision timer if available
-}
-const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    const r = (d + Math.random() * 16) % 16 | 0;
-    d = Math.floor(d / 16);
-    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-});
-return uuid;
-}
-
-const uuid = generateUUID();
-console.log("chat_id ", uuid);
-
 // assign to chat_id element
-// document.getElementById("chat_id").innerHTML = "Chat ID: " + uuid;
 const messagesDiv = document.getElementById("messages");
 const input = document.getElementById("input");
 const sendButton = document.getElementById("send");

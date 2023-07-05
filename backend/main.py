@@ -273,6 +273,7 @@ async def chat_with_bot(websocket: WebSocket):
         timer.start()
         df = download_and_load_pkl(f"{chat_id}/{all_ebbeddings_df_file_path}", bucket_name="easychathelp")
         timer.stop()
+        # TODO add way to create synthetic questions that are similar to the most recent message
         sorted_by_similarity_df = search_embeddings_with_text(df, most_recent_message)
 
         sorted_by_similarity_texts = sorted_by_similarity_df['content'].tolist()
@@ -341,72 +342,17 @@ async def interview_training(websocket: WebSocket):
     
     chat = ChatOpenAI(streaming=True, callbacks=[WebsocketCallbackHandler(websocket)], verbose=True, temperature=0.7)
     
+    await websocket.send_json({"type": "message", "message": "What would you like to be interviewed about?"})
+    
+    print("sent question")
     while True:
         incoming = await websocket.receive_json()
-        # print(incoming)
+        print(incoming)
         messages = incoming["messages"]
-        chat_id = incoming["chat_id"]
-        chat_id = "chris"
-        # print("messages: ", messages)
-        services_messages = []
-        most_recent_message = messages[-1]["content"]
-
-        for message in messages:
-            if message["type"] == "human":
-                services_messages.append(HumanMessage(content=message["content"]))
-            else:
-                services_messages.append(AIMessage(content=message["content"]))
-
-        relevant_questions = ""
-    
-        # df = load_pkl(all_ebbeddings_df_file_path, verbose=True)
-        timer.start()
-        df = download_and_load_pkl(f"{chat_id}/{all_ebbeddings_df_file_path}", bucket_name="easychathelp")
-        timer.stop()
-        sorted_by_similarity_df = search_embeddings_with_text(df, most_recent_message)
-
-        sorted_by_similarity_texts = sorted_by_similarity_df['content'].tolist()
-        
-        sorted_by_similarity_texts = sorted_by_similarity_texts[0:DATA_DEPTH_THRESHOLD]
-
-        # print("sorted_by_similarity_texts: ", sorted_by_similarity_texts)
-        sorted_by_similarity_texts_duplicates_removed = remove_duplicates_from_sorted_list(sorted_by_similarity_texts)
-        
-        # print("sorted_by_similarity_texts_duplicates_removed: ", sorted_by_similarity_texts_duplicates_removed)
-
-        len_of_list = len(sorted_by_similarity_texts_duplicates_removed)
-        for i in range(len(sorted_by_similarity_texts_duplicates_removed)):
-            # check if last message is in the texts
-            if i == len_of_list - 1:
-                relevant_questions += f"{sorted_by_similarity_texts_duplicates_removed[i]}"
-            else:
-                relevant_questions += f"{sorted_by_similarity_texts_duplicates_removed[i]}\n\n"
-        
-        # print("relevant_questions: ", relevant_questions)
-
-        system_string = f"""You are the official chatbot of {ORGANIZATION_NAME}
-Recently {ORGANIZATION_NAME} and other people were interviewed about {ORGANIZATION_NAME} here is some of the questions they were asked and how they responded:
----- relevant questions ----
-{relevant_questions}
----- end relevant questions ----
-
-Use this to guide your conversation with the user. Answer the user questions very directly and professionally.
-"""     
-        system_string2 = f"""If you do not know an answer, politely tell the user you don't know at this time"""
-
-        system_string3 = f"""Keep your answer accurate and succinct. Only use the most relevant information to answer the user question. Remember you are the official chatbot of {ORGANIZATION_NAME} and you are representing {ORGANIZATION_NAME}."""
-
-        system_string4 = f"""Respond with the minimum amount of information to answer the user question. If the user wants more information, they will ask for it."""
-        # we now have a list of messages, we can use this to build a conversation
-
-        print(system_string)
-
         final_messages = []
-
+        system_string = f"you are interviewing a person as them their name and what kind of questions they want to be asked. Then you interview them. Never repeat yourself and don't go down any rabbit holes."
+        
         final_messages.append(SystemMessage(content=system_string))
-        final_messages.append(SystemMessage(content=system_string2))
-        final_messages.append(SystemMessage(content=system_string3))
-        final_messages.append(SystemMessage(content=system_string4))
 
         log_messages = [system_string]
         for message in messages:
@@ -417,14 +363,7 @@ Use this to guide your conversation with the user. Answer the user questions ver
                 final_messages.append(AIMessage(content=message["content"]))
                 log_messages.append(message["content"])
 
-        # print("final_messages: ", final_messages[1:])
-
-        # print("final_messages: ", final_messages)
-
         response = await chat.agenerate([final_messages])
-        
-        mod_most_recent_message = sanitize_string(most_recent_message)
-        # logging can go here
 
-        await websocket.send_json({"type": "llm_end"})
-        await websocket.send_json({"done": True})
+        # await websocket.send_json({"type": "question", "message": f"What is your name? {len(messages)}"})
+        
