@@ -350,7 +350,7 @@ async def interview_training(websocket: WebSocket):
         print(incoming)
         messages = incoming["messages"]
         final_messages = []
-        system_string = f"you are interviewing a person as them their name and what kind of questions they want to be asked. Then you interview them. Never repeat yourself and don't go down any rabbit holes."
+        system_string = f"You are interviewing a person as them their name and what kind of questions they want to be asked. Then you interview them. Never repeat yourself and don't go down any rabbit holes."
         
         final_messages.append(SystemMessage(content=system_string))
 
