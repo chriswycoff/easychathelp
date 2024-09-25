@@ -25,6 +25,10 @@ import numpy as np
 
 import library
 
+from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.text_splitter import CharacterTextSplitter
+from langchain.vectorstores import FAISS
+from langchain.document_loaders import TextLoader
 
 from google.cloud import storage
 
@@ -369,12 +373,54 @@ def main(use_manual_library=True, verbose=False):
     embeddings_loaded = load_pkl(all_embeddings_filename, verbose=verbose)
     list_of_dicts_to_dataframe(embeddings_loaded, pkl_filename=all_ebbeddings_df_file_path)
 
+def insert_into_faiss(text, faiss_db, embeddings, verbose=False):
+    # insert into faiss
+    query_embedding = embeddings.embed_query(text)
+    faiss_db.insert(query_embedding, text)
+    if verbose:
+        print("inserted into faiss")
+
 
 if __name__ == "__main__":
-    main(verbose=True)
+    pass
+    # main(verbose=True)
 
     # test the embeddings
-    embeddings_loaded = load_pkl(all_ebbeddings_df_file_path)
-    res = search_embeddings_with_text(embeddings_loaded, "tell me about chris' programming skills")
+    # embeddings_loaded = load_pkl(all_ebbeddings_df_file_path)
+
+    # for index, row in embeddings_loaded.iterrows():
+    #     print(f"Index: {index}")
+    #     print(f"Row data: \n{row}")
+    #     print("-------------------")
     
-    print(res["content"].head(10).tolist())
+    # res = search_embeddings_with_text(embeddings_loaded, "tell me about chris' programming skills")
+    
+    # print(res["content"].head(10).tolist())
+
+
+    # ideas_from_parsed = [text[0] for text in parsed_texts]
+    # parsed_texts_metadatas = [{"request":text[0], "answer":text[1]} for text in parsed_texts]
+    # print("ideas_from_parsed: ", ideas_from_parsed)
+    
+    # embeddings = OpenAIEmbeddings()
+    # faiss_db = FAISS.from_texts(ideas_from_parsed, embeddings, metadatas=parsed_texts_metadatas)
+
+    # faiss_db.save_local("faiss_index")
+
+    # faiss_db = FAISS.load_local("faiss_index", embeddings)
+
+    # faiss_db.similarity_search
+    # docs = faiss_db.similarity_search("a viral video for a beer company", k=10)
+    # print("similarity search")
+
+    # parsed_texts = load_pkl(f"run-{RUN_ID}/parsed_texts-{RUN_ID}.pkl")
+
+    # embeddings = OpenAIEmbeddings()
+    # faiss_db = FAISS.load_local("faiss_index", embeddings)
+
+    # faiss_db.similarity_search
+    # docs = faiss_db.similarity_search("a viral video for a beer company", k=5)
+    # for doc in docs:
+    #     print("---------------------\n\n")
+    #     print(doc)
+    #     print("---------------------\n\n")
